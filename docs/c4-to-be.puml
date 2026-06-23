@@ -1,0 +1,55 @@
+@startuml CinemaAbyss-To-Be-C4-Container
+
+!include <C4Container>
+
+HIDE_STEREOTYPE()
+
+title CinemaAbyss
+
+Person(viewer, "User", "Просматривает фильмы, управляет подпиской")
+Person(admin,  "Administrator", "Управляет контентом и пользователями")
+
+System_Ext(payment_provider, "Payment Provider", "Внешний процессинг платежей")
+
+System_Boundary(platform, "CinemaAbyss Platform") {
+
+    Container(gateway, "API Gateway / Proxy Service", "", "Единая точка входа. Маршрутизирует запросы к доменным сервисам. Реализует Strangler Fig через feature-флаг.")
+
+    Container(users_svc,    "Users Service",         "", "Регистрация, профиль, аутентификация пользователей.")
+    Container(movies_svc,   "Movies Service",        "", "Метаданные фильмов, жанры, рейтинги.")
+    Container(payments_svc, "Payments Service",      "", "Создание и обработка платёжных транзакций.")
+    Container(subs_svc,     "Subscriptions Service", "", "Управление подписками и тарифными планами.")
+    Container(events_svc,   "Events Service",        "", "Consumer и Producer. Обрабатывает и логирует доменные события из Kafka.")
+
+    ContainerQueue(kafka, "Apache Kafka", "", "Асинхронная шина событий")
+
+    ContainerDb(users_db,   "Users DB",         "", "Данные пользователей")
+    ContainerDb(movies_db,  "Movies DB",        "", "Данные фильмов, жанры, рейтинги")
+    ContainerDb(pay_db,     "Payments DB",      "", "История транзакций")
+    ContainerDb(subs_db,    "Subscriptions DB", "", "Данные подписок")
+}
+
+Rel(viewer, gateway, "HTTPS", "REST API")
+Rel(admin,  gateway, "HTTPS", "REST API")
+
+Rel(gateway, users_svc,    "HTTP", "REST /api/users")
+Rel(gateway, movies_svc,   "HTTP", "REST /api/movies")
+Rel(gateway, payments_svc, "HTTP", "REST /api/payments")
+Rel(gateway, subs_svc,     "HTTP", "REST /api/subscriptions")
+Rel(gateway, events_svc,   "HTTP", "REST /api/events")
+
+Rel(users_svc,    users_db,  "SQL", "PostgreSQL")
+Rel(movies_svc,   movies_db, "SQL", "PostgreSQL")
+Rel(payments_svc, pay_db,    "SQL", "PostgreSQL")
+Rel(subs_svc,     subs_db,   "SQL", "PostgreSQL")
+
+Rel(users_svc,    kafka, "Publish", "user-events")
+Rel(movies_svc,   kafka, "Publish", "movie-events")
+Rel(payments_svc, kafka, "Publish", "payment-events")
+Rel(subs_svc,     kafka, "Publish", "subscription-events")
+
+Rel(events_svc, kafka, "Consume / Produce", "Все топики")
+
+Rel(payments_svc, payment_provider, "HTTPS", "REST API")
+
+@enduml
