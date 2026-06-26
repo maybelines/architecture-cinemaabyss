@@ -19,8 +19,6 @@ const (
 	topicPayment = "payment-events"
 )
 
-// Event is the generic envelope written to Kafka, matching the Event schema
-// in api-specification.yaml.
 type Event struct {
 	ID        string      `json:"id"`
 	Type      string      `json:"type"`
