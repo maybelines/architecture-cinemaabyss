@@ -8,6 +8,10 @@
 *.out
 /vendor/
 /Godeps/
+src/microservices/*/events
+src/microservices/*/movies
+src/microservices/*/proxy
+src/monolith/monolith
 
 # Go workspace file
 go.work
