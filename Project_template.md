@@ -278,6 +278,8 @@ cat .docker/config.json | base64
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
 
+[GET /api/movies via Ingress](docs/k8s-movies.png)
+[events-service logs after tests](docs/k8s-events-log.png)
 
 # Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -352,6 +354,10 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+
+[Helm Deploy — helm list + kubectl get pods](docs/helm-deploy.png)
+[GET /api/movies via Helm deployment (1/2)](docs/helm-movies-1.png)
+[GET /api/movies via Helm deployment (2/2)](docs/helm-movies-2.png)
 
 ## Удаляем все
 
